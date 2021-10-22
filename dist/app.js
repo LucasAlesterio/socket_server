@@ -22,7 +22,7 @@ io.on("connection", (socket) => {
     });
 });
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + (process.env.TS_NODE ? "/index.html" : "../index.html"));
+    res.sendFile(__dirname + "/public/index.html");
 });
 app.get("/send", (req, res) => {
     io.emit("chat message", "Hello World");
