@@ -1,7 +1,7 @@
 {
   "name": "sctr_server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.ts",
   "license": "MIT",
   "scripts": {
     "start": "node dist/app.js",
