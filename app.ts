@@ -1,30 +1,62 @@
-import express, { Request, Response } from "express";
-import { Server } from "socket.io";
+import cors from "cors";
+import express from "express";
 import http from "http";
+import { Server } from "socket.io";
 
 const port = process.env.PORT || 3000;
 const app = express();
+app.use(
+    cors({
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE"],
+    })
+);
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE"],
+    },
+});
 io.on("connection", (socket) => {
+    var roomName = "";
     console.log("A user connected");
-    socket.on("chat message", (msg) => {
-        console.log("message: " + msg);
-        io.emit("chat message", msg);
+    console.log(socket.rooms);
+    socket.on("create", function (room) {
+        roomName = room;
+        console.log("Create Room: " + room);
+        socket.join(room);
+    });
+    socket.on("rele", (msg) => {
+        console.log("message: ");
+        console.log(msg);
+        io.to(roomName).emit("rele", msg);
+    });
+    socket.on("led", (msg) => {
+        console.log(roomName);
+        console.log("message: ");
+        console.log(msg);
+        io.to(roomName).emit("led", msg);
+    });
+    socket.on("tempRequest", (msg) => {
+        console.log("tempRequest: ");
+        console.log(msg);
+        io.to(roomName).emit("tempRequest", msg);
+    });
+    socket.on("temp", (msg) => {
+        console.log("temp: ");
+        console.log(msg);
+        io.to(roomName).emit("temp", msg);
+    });
+    socket.on("servo", (msg) => {
+        console.log("servo: ");
+        console.log(msg);
+        io.to(roomName).emit("servo", msg);
     });
     // socket.broadcast.emit("hi");
     socket.on("disconnect", () => {
         console.log("User disconnected");
     });
-});
-
-app.get("/", (req: Request, res: Response) => {
-    res.sendFile(__dirname + "/public/index.html");
-});
-
-app.get("/send", (req: Request, res: Response) => {
-    io.emit("chat message", "Hello World");
-    res.send("Message sent");
 });
 
 server.listen(port, () => {
