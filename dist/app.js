@@ -1,18 +1,20 @@
-import cors from "cors";
-import express from "express";
-import http from "http";
-import { Server } from "socket.io";
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const cors_1 = __importDefault(require("cors"));
+const express_1 = __importDefault(require("express"));
+const http_1 = __importDefault(require("http"));
+const socket_io_1 = require("socket.io");
 const port = process.env.PORT || 3000;
-const app = express();
-app.use(
-    cors({
-        origin: "*",
-        methods: ["GET", "POST", "PUT", "DELETE"],
-    })
-);
-const server = http.createServer(app);
-const io = new Server(server, {
+const app = (0, express_1.default)();
+app.use((0, cors_1.default)({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+}));
+const server = http_1.default.createServer(app);
+const io = new socket_io_1.Server(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST", "PUT", "DELETE"],
@@ -53,21 +55,12 @@ io.on("connection", (socket) => {
         console.log(msg);
         io.to(roomName).emit("servo", msg);
     });
-    socket.on("button", (msg) => {
-        console.log("message button: ");
-        console.log(msg);
-        io.to(roomName).emit("buttonPressed", msg);
-    });
-    socket.on("ledColor", (msg) => {
-        console.log("message led color: ");
-        console.log(msg);
-        io.to(roomName).emit("ledColor", msg);
-    });
+    // socket.broadcast.emit("hi");
     socket.on("disconnect", () => {
         console.log("User disconnected");
     });
 });
-
 server.listen(port, () => {
     console.log(`🔥 Server running in http://localhost:${port} 🔥`);
 });
+//# sourceMappingURL=app.js.map
